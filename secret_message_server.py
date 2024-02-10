@@ -18,11 +18,17 @@
 #    secret_message = receive_secret_message()
 #    print("Received secret message:", secret_message)
 
+
 from scapy.all import *
 
 
+def is_empty_udp__packet(pkt):
+    payload = pkt[UDP].payload
+    return isinstance(payload, Padding) and (payload.load == b'\x00' * len(payload.load))
+
+
 def f1(pkt):
-    return UDP in pkt and pkt[UDP].sport == 12345 and IP in pkt
+    return IP in pkt and UDP in pkt and is_empty_udp__packet(pkt)
 
 
 def receive_secret_message(server_port=12345):
@@ -31,7 +37,7 @@ def receive_secret_message(server_port=12345):
             # src port {server_port}
             pkt = sniff(lfilter=f1, count=1)[0]
             char = chr(pkt[UDP].dport)
-            print(char, end='', flush=True)
+            print(char, end='')
     except KeyboardInterrupt:
         print("\nClient stopped.")
 

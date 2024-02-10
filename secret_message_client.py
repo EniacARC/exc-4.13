@@ -7,19 +7,21 @@
 #        send(IP(dst=server_ip) / UDP(dport=ascii_value))
 
 
-#if __name__ == "__main__":
+# if __name__ == "__main__":
 #    message = input("Enter your secret message: ")
 #    send_secret_message(message)
 
 
 from scapy.all import *
 
+SERVER_IP = '127.0.0.1'
+
 
 def send_secret_message(message):
     try:
         for char in message:
             ascii_value = ord(char)
-            pkt = IP(dst='127.0.0.1') / UDP(dport=ascii_value, sport=12345)
+            pkt = IP(dst=SERVER_IP) / UDP(dport=ascii_value)
             pkt.show()
             send(pkt)
     except Exception as e:
